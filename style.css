@@ -612,3 +612,26 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   .home-hero { grid-template-columns: 1fr; gap: 1.5rem; }
   .home-hero-text h1 { font-size: 1.55rem; }
 }
+
+/* ── Download-Notizen Button ─────────────────────────────────── */
+.btn-download-notizen {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .7rem 1.4rem;
+  background: var(--navy);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: .9rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all .18s;
+  box-shadow: 0 2px 8px rgba(26,35,50,.2);
+}
+.btn-download-notizen:hover {
+  background: var(--navy-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(26,35,50,.25);
+}

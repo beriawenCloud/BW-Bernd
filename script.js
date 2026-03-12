@@ -955,16 +955,24 @@ function renderReflexion(moduleId) {
       <div style="display:flex;flex-direction:column;gap:.85rem;margin-top:1rem">
         <div class="reflexion-item">
           <label>Was hat die KI gut gemacht?</label>
-          <textarea placeholder="z. B. klare Struktur, richtige Formeln, gute Beispiele ..."></textarea>
+          <textarea id="notiz-gut" placeholder="z. B. klare Struktur, richtige Formeln, gute Beispiele ..."></textarea>
         </div>
         <div class="reflexion-item">
           <label>Was fehlt oder ist unvollständig / falsch?</label>
-          <textarea placeholder="z. B. fehlende Kennzahl, falsche Formel, wichtiger Begriff vergessen ..."></textarea>
+          <textarea id="notiz-fehlt" placeholder="z. B. fehlende Kennzahl, falsche Formel, wichtiger Begriff vergessen ..."></textarea>
         </div>
         <div class="reflexion-item">
           <label>Was würdest du in der Klausur anders formulieren?</label>
-          <textarea placeholder="Deine eigene, verbesserte Antwort ..."></textarea>
+          <textarea id="notiz-besser" placeholder="Deine eigene, verbesserte Antwort ..."></textarea>
         </div>
+      </div>
+      <div style="margin-top:1.25rem">
+        <button class="btn-download-notizen" onclick="downloadNotizen('${moduleId}')">
+          📥 Notizen als Textdatei speichern
+        </button>
+        <p style="font-size:.75rem;color:var(--text-muted);margin-top:.5rem;">
+          Die Datei enthält Modul, Datum und deine Notizen – ideal zum Nachschlagen.
+        </p>
       </div>
     </div>
 
@@ -1156,4 +1164,84 @@ function renderKiIrren() {
     </div>`;
 
   $('content-area').innerHTML = html;
+}
+
+// ── Notizen als .txt herunterladen ───────────────────────────
+function downloadNotizen(moduleId) {
+  const cfg = getModuleConfig(moduleId);
+  const data = getModuleData(moduleId);
+  const promptData = KI_PROMPTS[moduleId];
+
+  const notizGut    = document.getElementById('notiz-gut')?.value?.trim()    || '(keine Eingabe)';
+  const notizFehlt  = document.getElementById('notiz-fehlt')?.value?.trim()  || '(keine Eingabe)';
+  const notizBesser = document.getElementById('notiz-besser')?.value?.trim() || '(keine Eingabe)';
+
+  const stars = document.querySelectorAll('.star.active').length;
+  const starLabel = ['', 'Noch unsicher', 'Eher unsicher', 'Geht so', 'Ziemlich sicher', 'Sehr sicher!'][stars] || '–';
+
+  const datum = new Date().toLocaleDateString('de-AT', { day:'2-digit', month:'2-digit', year:'numeric' });
+  const uhrzeit = new Date().toLocaleTimeString('de-AT', { hour:'2-digit', minute:'2-digit' });
+
+  const reflexionFragen = promptData?.reflexion || [
+    'Hat die KI alle relevanten Fachbegriffe korrekt verwendet?',
+    'Wurden alle Teilaufgaben vollständig beantwortet?',
+    'Fehlen wichtige Informationen oder Aspekte aus dem Lehrstoff?',
+    'Sind die Beispiele und Berechnungen nachvollziehbar und korrekt?'
+  ];
+
+  const lernziel = promptData?.lernziel || 'KI-Outputs kritisch hinterfragen, einordnen und ergänzen.';
+
+  const separator = '═'.repeat(60);
+  const line = '─'.repeat(60);
+
+  const inhalt = `${separator}
+  BW-BERND – Reflexionsnotizen
+  ${separator}
+
+  MODUL:      ${cfg?.label || moduleId}
+  SCHULTYP:   ${state.schultyp.toUpperCase()} · ${state.jahrgang}. Jahrgang
+  UNTERNEHMEN: ${state.schultyp === 'hlw' ? 'AlpenFresh Berghotel & Spa' : 'AlpenFresh GmbH'}
+  DATUM:      ${datum}, ${uhrzeit}
+  ${line}
+
+  LERNZIEL DIESES MODULS
+  ${line}
+  ${lernziel}
+
+  ${line}
+  REFLEXIONSFRAGEN (zur KI-Antwort)
+  ${line}
+  ${reflexionFragen.map((f, i) => `  ${i+1}. ${f}`).join('\n')}
+
+  ${separator}
+  MEINE NOTIZEN
+  ${separator}
+
+  1) WAS HAT DIE KI GUT GEMACHT?
+  ${line}
+  ${notizGut}
+
+  2) WAS FEHLT ODER IST FALSCH / UNVOLLSTÄNDIG?
+  ${line}
+  ${notizFehlt}
+
+  3) WAS WÜRDE ICH IN DER KLAUSUR ANDERS FORMULIEREN?
+  ${line}
+  ${notizBesser}
+
+  ${line}
+  SELBSTBEWERTUNG: ${stars > 0 ? '★'.repeat(stars) + '☆'.repeat(5-stars) : '(nicht bewertet)'}  ${starLabel}
+  ${separator}
+  Erstellt mit BW-Bernd · © GALS
+`;
+
+  const blob = new Blob([inhalt], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `BW-Bernd_${cfg?.label?.replace(/[^a-zA-Z0-9äöüÄÖÜ]/g, '_') || moduleId}_${datum.replace(/\./g, '-')}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BW-Bernd – Betriebswirtschaft Lernplattform</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div id="login-screen">
+    <div class="login-card">
+      <div class="login-emojis">🤖💼</div>
+      <div class="login-logo">BW-Bernd</div>
+      <p class="login-hint">Bitte gib das Passwort ein, das du von deiner Lehrerin erhalten hast.</p>
+      <div class="login-form">
+        <input type="password" id="login-password" placeholder="Passwort" autocomplete="off">
+        <button class="btn-login" id="btn-login">Einloggen</button>
+        <div class="login-error" id="login-error"></div>
+      </div>
+      <p class="login-footer">Dieses Tool dient ausschließlich Unterrichtszwecken.<br>&copy; GALS</p>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="app">
+
+    <header class="app-header">
+      <div class="header-brand">
+        <span class="header-icon">📊</span>
+        <span class="header-title">BW-Bernd</span>
+        <span class="header-copy">© GALS</span>
+      </div>
+      <div class="header-controls">
+        <div class="schultyp-toggle">
+          <button id="schultyp-hak" class="active">HAK</button>
+          <button id="schultyp-hlw">HLW</button>
+        </div>
+        <select class="jahrgang-select" id="jahrgang-select">
+          <option value="1">1. Jahrgang</option>
+          <option value="2">2. Jahrgang</option>
+          <option value="3" selected>3. Jahrgang</option>
+          <option value="4">4. Jahrgang</option>
+          <option value="5">5. Jahrgang</option>
+        </select>
+        <button class="btn-home" id="btn-home">🏠 Startseite</button>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <div class="content-area" id="content-area">
+        <!-- dynamisch befüllt -->
+      </div>
+    </main>
+
+  </div>
+
+  <script src="solutions_hak.js"></script>
+  <script src="solutions_hlw.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
